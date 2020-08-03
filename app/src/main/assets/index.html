@@ -6,6 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel=stylesheet type=text/css href="style.css">
+  <script src="main.js"></script>
 </head>
 
 <body>
@@ -29,11 +30,13 @@
         <div class="file_down">
           <div class="ot1 ico"></div>
           <span class="ot2">Load backup</span>
+          <input type="file">
         </div>
       </div>
       <div class="new">
-        <div class="ot1 ico"></div>
-        <span class="ot2">New item</span>
+        <div class="ot1 ico new_item_ico"></div>
+        <span class="ot2 new_item">New item</span>
+        <span class="ot2 cancel hidden">Cancel</span>
       </div>
     </div>
     <!-- /action links -->
@@ -41,145 +44,82 @@
   <!-- /top -->
   <!-- content -->
   <div class="row items">
-    <!-- item -->
-    <div class="item">
-      <div class="ob ol_0"></div>
-      <div class="name ot1">Яндекс.Деньги</div>
-      <div class="actions">
-        <div class="act generate">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass generated</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Generate</span>
-        </div>
-        <div class="act copy">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass copied</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Copy</span>
-        </div>
-        <div class="act edit">
-          <div class="ot1 ico"></div>
-          <span class="ot2">Edit</span>
-        </div>
-      </div>
-    </div>
-    <!-- /item -->
-    <!-- item -->
-    <div class="item">
-      <div class="ob ol_0"></div>
-      <div class="name ot1">ВКонтакте</div>
-      <div class="actions">
-        <div class="act generate">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass generated</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Generate</span>
-        </div>
-        <div class="act copy">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass copied</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Copy</span>
-        </div>
-        <div class="act edit">
-          <div class="ot1 ico"></div>
-          <span class="ot2">Edit</span>
-        </div>
-      </div>
-    </div>
-    <!-- /item -->
-    <!-- item -->
-    <div class="item">
-      <div class="ob ol_0"></div>
-      <div class="name ot1">Google акаунт</div>
-      <div class="actions">
-        <div class="act generate">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass generated</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Generate</span>
-        </div>
-        <div class="act copy">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass copied</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Copy</span>
-        </div>
-        <div class="act edit">
-          <div class="ot1 ico"></div>
-          <span class="ot2">Edit</span>
-        </div>
-      </div>
-    </div>
-    <!-- /item -->
-    <!-- item -->
-    <div class="item">
-      <div class="ob ol_0"></div>
-      <div class="name ot1">Генерация</div>
-      <div class="actions">
-        <div class="act generate">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass generated</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Generate</span>
-        </div>
-        <div class="act copy">
-          <!-- done -->
-          <div class="done">
-            <div class="ob"></div>
-            <div class="ot1 ico"></div>
-            <span class="ot2">Spass copied</span>
-          </div>
-          <!-- /done -->
-          <div class="ot1 ico"></div>
-          <span class="ot2">Copy</span>
-        </div>
-        <div class="act edit">
-          <div class="ot1 ico"></div>
-          <span class="ot2">Edit</span>
-        </div>
-      </div>
-    </div>
-    <!-- /item -->
   </div>
+
+  <div class="row edit hidden editItem">
+    <!--edit item -->
+    <div class="item wrap">
+      <div class="ob ol_0"></div>
+      <div class="name ot1"></div>
+      <div class="field">
+        <div class="ob ol_2"></div>
+        <input type="text" name="item_name" value="" class="ot2">
+        <span></span>
+      </div>
+      <div class="field">
+        <input id="genpass" type="radio" name="spassword" value="generate Spass" checked>
+        <label for="genpass"><span>generate Spass</span></label>
+        <input id="manpass" type="radio" name="spassword" value="manual password">
+        <label for="manpass"><span>manual password</span></label>
+        <div class="field mpass">
+          <div class="ob ol_2"></div>
+          <input type="text" name="item_man_pass" placeholder="Enter your password" class="ot2">
+          <span></span>
+        </div>
+      </div>
+      <!-- button -->
+      <div class="button save">
+        <div class="ob ot2"></div>
+        <span class="ot1">Save</span>
+      </div>
+      <!-- /button -->
+      <!-- button -->
+      <div class="button delete">
+        <div class="ob ot2"></div>
+        <span class="ot1">Delete item</span>
+      </div>
+      <!-- /button -->
+    </div>
+    <!-- /edit item -->
+  </div>
+
   <!-- /content -->
 </DIV>
+
+<div class="templates">
+  <div class="itemlist">
+    <div class="ob ol_0"></div>
+    <div class="name ot1">{name}</div>
+    <div class="actions">
+      <div class="act generate">
+        <!-- done -->
+        <div class="done">
+          <div class="ob"></div>
+          <div class="ot1 ico"></div>
+          <span class="ot2">Spass generated</span>
+        </div>
+        <!-- /done -->
+        <div class="ot1 ico"></div>
+        <span class="ot2">Generate</span>
+      </div>
+      <div class="act copy">
+        <!-- done -->
+        <div class="done">
+          <div class="ob"></div>
+          <div class="ot1 ico"></div>
+          <span class="ot2">Spass copied</span>
+        </div>
+        <!-- /done -->
+        <div class="ot1 ico"></div>
+        <span class="ot2">Copy</span>
+      </div>
+      <div class="act edit">
+        <div class="ot1 ico"></div>
+        <span class="ot2">Edit</span>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

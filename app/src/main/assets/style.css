@@ -1,0 +1,494 @@
+@font-face {
+  font-family: mainFont;
+  src: url(Ruda-VariableFont_wght.ttf);
+  font-style: normal;
+}
+
+:root {
+  --green_color: #98FB98;
+  --red_color: #FA9898;
+  --blue_color: #98D5FB;
+  --back_color: #0A1829;
+  --border_color: #1D334A;
+
+  --height_0: 2.1vh;
+  --height_1: 3vh;
+  --height_2: 3.6vh;
+  --height_3: 9vh;
+  --height_4: 11vh;
+
+  --height_100: calc(100% - 2*var(--height_2)); /* 100% */
+  --height_101: calc(100vh - 2*var(--height_2)); /* 100vh */
+}
+
+*, html, body, h1, h2, h3, h4, h5, h6, a, img, ul, ol, li, div, span, b, time,
+u, p, input, label, textarea, select, option {
+  color: white;
+  font-family: mainFont, sans-serif;
+  font-size: var(--height_1);
+  line-height: 1.5;
+  font-weight: 100;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  border: 0;
+  vertical-align: top;
+  z-index: auto;
+  box-sizing: border-box;
+  transition: 1s ease-in-out;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: var(--height_2) 0;
+  background-color: var(--back_color);
+}
+
+h1 {
+  font-size: var(--height_2);
+  cursor: pointer;
+}
+
+.big_div {
+  margin: auto;
+}
+
+.ot1 {
+  opacity: 0.8;
+}
+
+.ot2 {
+  opacity: 0.7;
+}
+
+.ot3 {
+  opacity: 0.6;
+}
+
+.ol_0 {
+  opacity: 0.02;
+}
+
+.ol_1, .item.open div.ol_0 {
+  opacity: 0.06;
+}
+
+.ol_2 {
+  opacity: 0.26;
+}
+
+.ob {
+  background-color: white;
+}
+
+input, .button {
+  height: var(--height_3);
+  width: 100%;
+  border: calc(0.1*var(--height_0)) solid var(--border_color);
+  padding: 0 var(--height_0);
+  font-size: var(--height_2);
+  background-color: var(--back_color);
+}
+
+.button {
+  cursor: pointer;
+  margin-top: var(--height_1);
+  margin-bottom: var(--height_1);
+}
+
+.button span {
+  font-size: inherit;
+  line-height: var(--height_3);
+}
+
+.button:hover .ob,
+.button:active .ob,
+.button:focus .ob {
+  opacity: 0.8;
+  transition: 0.3s;
+}
+
+.button.cancel:hover .ob,
+.button.cancel:hover .ob,
+.button.cancel:hover .ob {
+  opacity: 0.4;
+}
+
+input[type=radio] {
+  display: none;
+}
+
+label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--height_0);
+}
+
+label span {
+  opacity: 0.3;
+}
+
+.clear:after {
+  clear: both;
+  content: " ";
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+/* styles */
+.wrap {
+  padding: 0 var(--height_0);
+  min-height: 100%;
+  height: auto;
+}
+
+.row {
+  display: flex;
+}
+
+.top {
+  margin-bottom: var(--height_4);
+}
+
+.logo {
+  flex: 50%;
+  flex-shrink: 0;
+  padding-left: var(--height_2);
+  cursor: pointer;
+}
+
+.logo img {
+  width: calc(var(--height_3) + 2*var(--height_2));
+}
+
+.logo img:hover {
+  filter: invert(50%);
+}
+
+.alinks {
+  flex: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  cursor: pointer;
+}
+
+.ico {
+  width: var(--height_1);
+  height: var(--height_1);
+  margin-right: var(--height_0);
+  display: inline-block;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.backup .ico {
+  background-image: url(images/backup.svg);
+}
+
+.backup .file_up .ico {
+  background-image: url(images/upload.svg);
+}
+
+.backup .file_down .ico {
+  background-image: url(images/download.svg);
+}
+
+.backup .file_up  {
+  margin-bottom: calc(0.5*var(--height_0));
+}
+
+.backup .file_up,
+.backup .file_down,
+.backup.open .file {
+  display: none;
+}
+
+.backup.open .file_up,
+.backup.open .file_down {
+  display: block;
+}
+
+.new .ico {
+  background-image: url(images/add.svg);
+}
+
+.ico+span {
+  line-height: var(--height_2);
+}
+
+.items {
+  flex-direction: column;
+}
+
+.item {
+  background-color: var(--back_color);
+  min-height: var(--height_4);
+  width: 100%;
+  text-align: center;
+  border-top: calc(0.1*var(--height_0)) solid var(--border_color);
+}
+
+.item:last-of-type,
+.item.edit {
+  border-bottom: calc(0.1*var(--height_0)) solid var(--border_color);
+}
+
+.item div.ob {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.items .item:hover .ob {
+  opacity: 0.06;
+  transition: 0.3s;
+}
+
+.item .name {
+  font-size: var(--height_2);
+  line-height: 4;
+  cursor: pointer;
+}
+
+.actions {
+  display: none;
+  border-top: calc(0.1*var(--height_0)) solid var(--border_color);
+  height: var(--height_3);
+}
+
+.item.open .actions {
+  display: flex;
+}
+
+.actions .act {
+  flex: 33%;
+  cursor: pointer;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.actions .act:nth-of-type(2) {
+  border-left: calc(0.1*var(--height_0)) solid var(--border_color);
+  border-right: calc(0.1*var(--height_0)) solid var(--border_color);
+}
+
+.generate .ico {
+  background-image: url(images/generate.svg);
+  width: var(--height_2);
+  height: var(--height_2);
+}
+
+.copy .ico {
+  background-image: url(images/copy.svg);
+}
+
+.edit .ico {
+  background-image: url(images/edit.svg);
+}
+
+.actions .ico+span {
+  font-size: var(--height_0);
+}
+
+.act .done {
+  position: absolute;
+  z-index: 99;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--height_0);
+}
+
+.act .done .ico {
+  background-image: url(images/done.svg);
+}
+
+.act .done.true .ob {
+  opacity: 0.5;
+  background-color: var(--green_color);
+}
+
+/* on .act click adds class .true to .done for 1s and removes */
+.act:hover .done.true {
+  opacity: 1;
+}
+
+.act .done.true +.ico,
+.act .done.true +.ico + span {
+  display: none;
+}
+
+.field {
+  margin-bottom: var(--height_1);
+}
+
+.field input+span {
+  position: absolute;
+  top: 0;
+  left: var(--height_0);
+  font-size: var(--height_0);
+  opacity: 0.2;
+}
+
+.field input[name=item_name]+span:before {
+  content: "Item’s name";
+}
+
+.field input[name=item_man_pass]+span:before {
+  content: "Your password";
+}
+
+.field input[placeholder]+span:before {
+  display: none;
+}
+
+.field input[value]+span:before,
+.field input:active+span:before,
+.field input:focus+span:before {
+  display: initial;
+}
+
+.field input:active,
+.field input:focus  {
+  opacity: 0.5;
+  transition: 0.2s;
+}
+
+.field input[type=radio]+label:before {
+  content: "";
+  display: inline-block;
+  width: var(--height_2);
+  height: var(--height_2);
+  border: calc(0.1*var(--height_0)) solid var(--border_color);
+  background-color: white;
+  opacity: 0.06;
+  margin-right: var(--height_0);
+}
+
+.field input[type=radio]:checked + label:before {
+  background-color: var(--blue_color);
+  opacity: 0.3;
+}
+
+.mpass {
+  display: none;
+}
+
+.field #manpass:checked ~ .mpass {
+  display: block;
+}
+
+.button.save {
+  border-color: var(--green_color);
+  margin-top: calc(2*var(--height_1));
+}
+
+.button.save .ob {
+  background-color: var(--green_color);
+}
+
+.button.cancel .ob {
+  opacity: 0.3;
+}
+
+.button.delete .ob {
+  background-color: var(--red_color);
+}
+
+.button.delete {
+  border-color: var(--red_color);
+}
+
+.button.save ~ .button.delete {
+  margin-top: var(--height_4);
+}
+
+.popup_true .new,
+.popup_true .row.edit,
+.popup {
+  display: none;
+}
+
+.popup_true .popup {
+  display: flex;
+}
+
+.popup .field {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--height_4);
+}
+
+.popup .button {
+  width: 45%;
+  margin-top: var(--height_4);
+}
+
+.templates {
+  display: none;
+}
+
+.file_down input {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.error {
+  border-color: red;
+}
+
+@media only screen and (orientation: landscape) {
+  .big_div {
+    display: none;
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  body:before {
+    content: "";
+    width: 100%;
+    height: var(--height_100);
+    position: absolute;
+    display: flex;
+    background: url(images/logo.svg) center no-repeat;
+    background-size: 30%;
+    animation-name: rotate;
+    animation-delay: 0.5s;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes rotate {
+    from {transform: rotate(0deg)}
+    to {transform: rotate(-90deg)}
+  }
+
+}
