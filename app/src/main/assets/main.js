@@ -176,7 +176,6 @@ class BackupView {
     this.onPopupProxy = this.onPopup.bind(this);
     this.onFileExportProxy = this.onFileExport.bind(this);
     this.onFileImportProxy = this.onFileImport.bind(this);
-    this.onFileReadyProxy = this.onFileReady.bind(this);
     this.manageEventListeners();
   }
 
@@ -185,7 +184,6 @@ class BackupView {
     this.element[action]('click', this.onPopupProxy);
     this.element.querySelector('.file_up')[action]('click', this.onFileExportProxy);
     this.element.querySelector('.file_down')[action]('click', this.onFileImportProxy);
-    this.element.querySelector('.file_down input')[action]('change', this.onFileReadyProxy);
   }
 
   onPopup() {
@@ -196,20 +194,18 @@ class BackupView {
   }
 
   onFileImport() {
-    this.element.querySelector('input').click();
-  }
+    const hostname = prompt('Please enter spass desktop host', '192.168.0.1');
 
-  onFileReady (event) {
-    if (event.target.files && event.target.files[0]) {
-      const reader = new FileReader();
-      const _this = this;
-      
-      reader.addEventListener('load', function (e) {
-        _this.list.load(JSON.parse(e.target.result));
+    if (hostname) {
+      fetch('http://' + hostname + ':9092/data/')
+      .then(response => response.json())
+      .then(data => {
+        this.list.load(data);
+      })
+      .catch(error => {
+        console.log(error);
       });
-      
-      reader.readAsBinaryString(event.target.files[0]);
-    }   
+    }
   }
 
   hidePopup() {
@@ -329,25 +325,6 @@ class ItemListView {
     this.onGenerateProxy = this.onGenerate.bind(this);
     this.onEditProxy = this.onEdit.bind(this);
     this.hideAllDonesProxy = this.hideAllDones.bind(this);
-    this.initBuffer();
-  }
-
-  initBuffer() {
-    this.buffer = document.querySelector('#itemListBuffer');
-
-    if (this.buffer) {
-      return ;
-    }
-
-    this.buffer = document.createElement('textarea');
-    this.buffer.id = 'itemListBuffer';
-    this.buffer.style.width = '0px';
-    this.buffer.style.height = '0px';
-    this.buffer.style.position = 'absolute';
-    this.buffer.style.background = 'transparent';
-    document.body.insertBefore(this.buffer, document.body.childNodes[0]);
-    this.buffer.value = 'itemListBuffer';
-    this.buffer.select();
   }
 
   manageEventListeners (remove) {
@@ -381,9 +358,16 @@ class ItemListView {
   }
 
   onCopy() {
-    this.buffer.value = this.model.get();
-    this.buffer.select();
-    document.execCommand('copy');
+    navigator.clipboard.writeText(this.model.get()).then(() => {
+      console.log("success");
+    }).catch((e)=> {
+      console.log(e);
+    });
+
+    if (NativeAndroid !== null && NativeAndroid !== undefined) {
+      NativeAndroid.copyToClipboard(this.model.get());
+    }
+
     this.element.querySelector('.copy .done').classList.add('true');
     setTimeout(this.hideAllDonesProxy, 2000);
   }
@@ -408,7 +392,6 @@ class ItemListView {
     this.template = null;
     this.model = null;
     this.element = null;
-    this.buffer = null;
   }
 }
 class ListView {
