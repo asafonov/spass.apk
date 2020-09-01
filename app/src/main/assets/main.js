@@ -225,7 +225,7 @@ class ItemView {
     this.cancelButton = document.querySelector('.cancel');
     this.saveButton = this.element.querySelector('.save');
     this.deleteButton = this.element.querySelector('.delete');
-    this.newButton = document.querySelector('.new');
+    this.newButton = document.querySelector('.new_item');
     this.onCancelProxy = this.onCancel.bind(this);
     this.onDeleteProxy = this.onDelete.bind(this);
     this.onSaveProxy = this.onSave.bind(this);
