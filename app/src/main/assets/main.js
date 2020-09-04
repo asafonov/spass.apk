@@ -106,14 +106,18 @@ class List {
     }
   }
 
-  save() {
+  asString() {
     let passwords = {};
 
     for (let i in this.items) {
       passwords[i] = this.items[i].get();
     }
 
-    window.localStorage.setItem('passwords', JSON.stringify(passwords));
+    return JSON.stringify(passwords);
+  }
+
+  save() {
+    window.localStorage.setItem('passwords', this.asString());
   }
 
   destroy() {
@@ -172,10 +176,13 @@ class MessageBus {
 class BackupView {
   constructor (list) {
     this.element = document.querySelector('.backup');
+    this.prompt = document.querySelector('.prompt');
     this.list = list;
     this.onPopupProxy = this.onPopup.bind(this);
     this.onFileExportProxy = this.onFileExport.bind(this);
     this.onFileImportProxy = this.onFileImport.bind(this);
+    this.promptAcceptedProxy = this.promptAccepted.bind(this);
+    this.promptCancelledProxy = this.promptCancelled.bind(this);
     this.manageEventListeners();
   }
 
@@ -184,28 +191,73 @@ class BackupView {
     this.element[action]('click', this.onPopupProxy);
     this.element.querySelector('.file_up')[action]('click', this.onFileExportProxy);
     this.element.querySelector('.file_down')[action]('click', this.onFileImportProxy);
+    this.prompt.querySelector('.ok')[action]('click', this.promptAcceptedProxy);
+    this.prompt.querySelector('.cancel')[action]('click', this.promptCancelledProxy);
   }
 
   onPopup() {
     this.element.classList.add('open');
   }
 
+  enterHostnameDialog() {
+    this.prompt.classList.remove('hidden');
+  }
+
+  closeHostnameDialog() {
+    this.prompt.classList.add('hidden');
+  }
+
+  promptAccepted() {
+    const hostname = this.prompt.querySelector('input[name=hostname]').value;
+
+    if (! hostname) {
+      alert("Hostname can't be empty");
+      return;
+    }
+
+    this[this.promptAction](hostname);
+    this.closeHostnameDialog();
+  }
+
+  promptCancelled() {
+    this.closeHostnameDialog();
+  }
+
   onFileExport() {
+    this.promptAction = 'exportFile';
+    this.enterHostnameDialog();
   }
 
   onFileImport() {
-    const hostname = prompt('Please enter spass desktop host', '192.168.0.1');
+    this.promptAction = 'importFile';
+    this.enterHostnameDialog();
+  }
 
-    if (hostname) {
-      fetch('http://' + hostname + ':9092/data/')
-      .then(response => response.json())
-      .then(data => {
-        this.list.load(data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }
+  importFile (hostname) {
+    fetch('http://' + hostname + ':9092/data/')
+    .then(response => response.json())
+    .then(data => {
+      this.list.load(data);
+    })
+    .catch(error => {
+      alert(error.message);
+    });
+  }
+
+  exportFile (hostname) {
+    fetch('http://' + hostname + '9092/post/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: this.list.asString()
+    })
+    .then(() => {
+      alert("Export completed");
+    })
+    .catch(error => {
+      alert(error.message);
+    });
   }
 
   hidePopup() {
