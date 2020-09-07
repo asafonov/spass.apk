@@ -201,10 +201,12 @@ class BackupView {
 
   enterHostnameDialog() {
     this.prompt.classList.remove('hidden');
+    asafonov.messageBus.send(asafonov.events.POPUP_SHOW);
   }
 
   closeHostnameDialog() {
     this.prompt.classList.add('hidden');
+    asafonov.messageBus.send(asafonov.events.POPUP_HIDE);
   }
 
   promptAccepted() {
@@ -295,6 +297,7 @@ class ItemView {
     this.cancelButton.classList.remove('hidden');
     document.querySelector('.new_item').classList.add('hidden');
     document.querySelector('.new_item_ico').classList.add('hidden');
+    asafonov.messageBus.send(asafonov.events.POPUP_SHOW);
   }
 
   hide() {
@@ -302,11 +305,13 @@ class ItemView {
     this.cancelButton.classList.add('hidden');
     document.querySelector('.new_item').classList.remove('hidden');
     document.querySelector('.new_item_ico').classList.remove('hidden');
+    asafonov.messageBus.send(asafonov.events.POPUP_HIDE);
   }
 
   render () {
     this.element.querySelector('.name').innerHTML = (this.model ? 'Edit' : 'Add') + ' Spass Item';
     this.element.querySelector('input[name=item_name]').value = this.model ? this.model.name : '';
+    this.deleteButton.classList[this.model ? 'remove' : 'add']('hidden');
   }
 
   onEditStarted (data) {
@@ -453,9 +458,8 @@ class ListView {
     this.views = {};
     this.element = document.querySelector('.items');
     asafonov.messageBus.subscribe(asafonov.events.LIST_UPDATED, this, 'render');
-    asafonov.messageBus.subscribe(asafonov.events.EDIT_STARTED, this, 'hide');
-    asafonov.messageBus.subscribe(asafonov.events.EDIT_CANCELLED, this, 'show');
-    asafonov.messageBus.subscribe(asafonov.events.EDIT_SAVED, this, 'show');
+    asafonov.messageBus.subscribe(asafonov.events.POPUP_SHOW, this, 'hide');
+    asafonov.messageBus.subscribe(asafonov.events.POPUP_HIDE, this, 'show');
   }
 
   render() {
@@ -487,9 +491,8 @@ class ListView {
     this.model = null;
     this.element = null;
     asafonov.messageBus.unsubscribe(asafonov.events.LIST_UPDATED, this, 'render');
-    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_STARTED, this, 'hide');
-    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_CANCELLED, this, 'show');
-    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_SAVED, this, 'show');
+    asafonov.messageBus.unsubscribe(asafonov.events.POPUP_SHOW, this, 'hide');
+    asafonov.messageBus.unsubscribe(asafonov.events.POPUP_HIDE, this, 'show');
   }
 }
 window.asafonov = {};
@@ -503,6 +506,8 @@ window.asafonov.events = {
   EDIT_CANCELLED: 'editCancelled',
   EDIT_SAVED: 'editSaved',
   EDIT_DELETED: 'editDeleted',
+  POPUP_SHOW: 'popupShow',
+  POPUP_HIDE: 'popupHide'
 };
 window.asafonov.settings = {
   passwordMinLength: 12,
