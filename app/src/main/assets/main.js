@@ -247,7 +247,7 @@ class BackupView {
   }
 
   exportFile (hostname) {
-    fetch('http://' + hostname + '9092/post/', {
+    fetch('http://' + hostname + ':9092/post/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
