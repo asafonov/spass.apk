@@ -462,7 +462,7 @@ label span {
   border-color: red;
 }
 
-@media only screen and (orientation: landscape) {
+/*@media only screen and (orientation: landscape) {
   .big_div {
     display: none;
   }
@@ -490,4 +490,4 @@ label span {
     to {transform: rotate(-90deg)}
   }
 
-}
+}*/
