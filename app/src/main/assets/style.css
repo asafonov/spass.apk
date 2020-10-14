@@ -461,33 +461,3 @@ label span {
 .error {
   border-color: red;
 }
-
-/*@media only screen and (orientation: landscape) {
-  .big_div {
-    display: none;
-  }
-
-  body {
-    overflow: hidden;
-  }
-
-  body:before {
-    content: "";
-    width: 100%;
-    height: var(--height_100);
-    position: absolute;
-    display: flex;
-    background: url(images/logo.svg) center no-repeat;
-    background-size: 30%;
-    animation-name: rotate;
-    animation-delay: 0.5s;
-    animation-duration: 3s;
-    animation-fill-mode: forwards;
-  }
-
-  @keyframes rotate {
-    from {transform: rotate(0deg)}
-    to {transform: rotate(-90deg)}
-  }
-
-}*/
