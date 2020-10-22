@@ -448,6 +448,7 @@ class ItemListView {
   onGenerate() {
     this.model.update();
     this.element.querySelector('.generate .done').classList.add('true');
+    this.hidePass();
     setTimeout(this.hideAllDonesProxy, 2000);
   }
   onEdit() {
