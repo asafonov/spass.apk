@@ -433,7 +433,7 @@ class ItemListView {
       dones[i].classList.remove('true');
     }
   }
-  onCopy() {
+  copyPasword() {
     navigator.clipboard.writeText(this.model.get()).then(() => {
       console.log("success");
     }).catch((e)=> {
@@ -442,6 +442,9 @@ class ItemListView {
     if (NativeAndroid !== null && NativeAndroid !== undefined) {
       NativeAndroid.copyToClipboard(this.model.get());
     }
+  }
+  onCopy() {
+    this.copyPasword();
     this.element.querySelector('.copy .done').classList.add('true');
     setTimeout(this.hideAllDonesProxy, 2000);
   }
@@ -449,6 +452,7 @@ class ItemListView {
     this.model.update();
     this.element.querySelector('.generate .done').classList.add('true');
     this.hidePass();
+    this.copyPasword();
     setTimeout(this.hideAllDonesProxy, 2000);
   }
   onEdit() {
