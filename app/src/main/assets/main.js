@@ -154,24 +154,34 @@ class Swipe {
     this.onTouchEndProxy = this.onTouchEnd.bind(this);
     this.addEventListeners();
   }
+  isMinimalMovement() {
+    const xdiff = this.x - this.xn;
+    const ydiff = this.y - this.yn;
+    return Math.abs(xdiff) > this.minMovement || Math.abs(ydiff) > this.minMovement;
+  }
   onTouchStart (event) {
     this.x = event.touches[0].clientX;
     this.y = event.touches[0].clientY;
+    this.xn = this.x;
+    this.yn = this.y;
+    this.swipeStarted = false;
   }
   onTouchMove (event) {
     this.xn = event.touches[0].clientX;
     this.yn = event.touches[0].clientY;
+    if (! this.swipeStarted && this.isMinimalMovement()) {
+      this.onSwipeStart();
+      this.swipeStarted = true;
+    }
+    this.swipeStarted && this.onSwipeMove();
   }
   onTouchEnd (event) {
-    const xdiff = this.x - this.xn;
-    const ydiff = this.y - this.yn;
-    this.x = null;
-    this.y = null;
-    this.xn = null;
-    this.yn = null;
-    if (Math.abs(xdiff) < this.minMovement && Math.abs(ydiff) < this.minMovement) {
+    if (! this.isMinimalMovement()) {
       return ;
     }
+    this.onSwipeEnd();
+    const xdiff = this.x - this.xn;
+    const ydiff = this.y - this.yn;
     if (Math.abs(xdiff) > Math.abs(ydiff)) {
       this[xdiff < 0 ? 'onRight' : 'onLeft']();
     } else {
@@ -192,6 +202,18 @@ class Swipe {
   }
   onDown (f) {
     f && (this.onDown = f);
+    return this;
+  }
+  onSwipeStart (f) {
+    f && (this.onSwipeStart = f);
+    return this;
+  }
+  onSwipeMove (f) {
+    f && (this.onSwipeMove = f);
+    return this;
+  }
+  onSwipeEnd (f) {
+    f && (this.onSwipeEnd = f);
     return this;
   }
   manageEventListeners (remove) {
@@ -398,12 +420,16 @@ class ItemListView {
     this.onCopyProxy = this.onCopy.bind(this);
     this.onGenerateProxy = this.onGenerate.bind(this);
     this.onEditProxy = this.onEdit.bind(this);
+    this.onSwipeStartProxy = this.onSwipeStart.bind(this);
+    this.onSwipeEndProxy = this.onSwipeEnd.bind(this);
     this.hideAllDonesProxy = this.hideAllDones.bind(this);
     this.showPassProxy = this.showPass.bind(this);
     this.hidePassProxy = this.hidePass.bind(this);
     this.swiper = new Swipe(this.element);
     this.swiper.onLeft(this.showPassProxy);
     this.swiper.onRight(this.hidePassProxy);
+    this.swiper.onSwipeStart(this.onSwipeStartProxy);
+    this.swiper.onSwipeEnd(this.onSwipeEndProxy);
   }
   manageEventListeners (remove) {
     const action = remove ? 'removeEventListener' : 'addEventListener';
@@ -416,6 +442,17 @@ class ItemListView {
     this.element.innerHTML = this.template.replace(/{name}/g, this.model.name).replace(/{value}/g, this.model.get());
     this.manageEventListeners();
     return this.element;
+  }
+  onSwipeStart() {
+    const name = this.element.querySelector('.name');
+    name.classList.remove('sweep');
+    name.classList.add('transparent');
+  }
+  onSwipeEnd() {
+    const name = this.element.querySelector('.name');
+    name.classList.remove('transparent');
+    name.classList.add('sweep');
+    setTimeout(function() {name.classList.remove('sweep')}, 1000);
   }
   showPass() {
     this.element.querySelector('.name').innerHTML = this.model.get();

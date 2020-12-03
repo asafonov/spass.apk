@@ -264,6 +264,20 @@ label span {
   font-size: var(--height_2);
   line-height: 4;
   cursor: pointer;
+  background: linear-gradient(to left, rgba(255,255,255,0.02) 50%, transparent 50%) left;
+  background-size: 200%;
+  transition: 0.3s;
+}
+
+.item .name.transparent {
+  opacity: 0;
+  transition: 0s;
+}
+
+.item .name.sweep {
+  opacity: 1;
+  transition: 0.9s;
+  background-position: right;
 }
 
 .actions {
