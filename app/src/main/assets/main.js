@@ -57,6 +57,9 @@ class List {
       asafonov.messageBus.send(asafonov.events.LIST_UPDATED);
     }
   }
+  search (query) {
+    return Object.keys(this.items).filter(i => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
+  }
   onEditSaved (data) {
     if (data.item && data.item.name == data.name) {
       this.items[data.name].setOrUpdate(data.password);
@@ -460,6 +463,12 @@ class ItemListView {
   hidePass() {
     this.element.querySelector('.name').innerHTML = this.model.name;
   }
+  hide() {
+    this.element.classList.add('hidden');
+  }
+  show() {
+    this.element.classList.remove('hidden');
+  }
   hideAllActions() {
     const actions = document.querySelectorAll('.open');
     for (let i = 0; i < actions.length; ++i) {
@@ -515,9 +524,18 @@ class ListView {
     this.model = model;
     this.views = {};
     this.element = document.querySelector('.items');
-    asafonov.messageBus.subscribe(asafonov.events.LIST_UPDATED, this, 'render');
-    asafonov.messageBus.subscribe(asafonov.events.POPUP_SHOW, this, 'hide');
-    asafonov.messageBus.subscribe(asafonov.events.POPUP_HIDE, this, 'show');
+    this.searchInput = document.querySelector('.search input');
+    this.searchProxy = this.search.bind(this);
+    this.manageEventListeners();
+  }
+  manageEventListeners (remove) {
+    const messageBusAction = remove ? 'unsubscribe' : 'subscribe';
+    const DOMAction = remove ? 'removeEventListener' : 'addEventListener';
+    asafonov.messageBus[messageBusAction](asafonov.events.LIST_UPDATED, this, 'render');
+    asafonov.messageBus[messageBusAction](asafonov.events.POPUP_SHOW, this, 'hide');
+    asafonov.messageBus[messageBusAction](asafonov.events.POPUP_HIDE, this, 'show');
+    this.searchInput[DOMAction]('focus', (e) => e.currentTarget.value = '');
+    this.searchInput[DOMAction]('input', this.searchProxy);
   }
   render() {
     this.element.innerHTML = '';
@@ -533,6 +551,15 @@ class ListView {
   hide() {
     this.element.classList.add('hidden');
   }
+  search() {
+    const query = this.searchInput.value;
+    for (let i in this.model.items) {
+      this.views[i].hide();
+    }
+    for (let i of this.model.search(query)) {
+      this.views[i].show();
+    }
+  }
   destroy() {
     for (let i in this.views) {
       this.views.destroy();
@@ -540,10 +567,9 @@ class ListView {
     }
     this.views = null;
     this.model = null;
+    this.manageEventListeners(true);
+    this.searchInput = null;
     this.element = null;
-    asafonov.messageBus.unsubscribe(asafonov.events.LIST_UPDATED, this, 'render');
-    asafonov.messageBus.unsubscribe(asafonov.events.POPUP_SHOW, this, 'hide');
-    asafonov.messageBus.unsubscribe(asafonov.events.POPUP_HIDE, this, 'show');
   }
 }
 window.asafonov = {};

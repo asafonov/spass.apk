@@ -475,3 +475,24 @@ label span {
 .error {
   border-color: red;
 }
+
+.search {
+  width: 100%;
+  margin-top: var(--height_1);
+}
+
+.search .ico {
+  background-image: url(images/search.svg);
+  position: absolute;
+  z-index: 999;
+  left: calc(2*var(--height_0));
+  top: 25%;
+}
+
+.search .field {
+  width: 100%;
+}
+
+.search .field input {
+  padding-left: calc(2*var(--height_0) + var(--height_2));
+}
