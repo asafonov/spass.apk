@@ -37,73 +37,75 @@ class Item {
 }
 class List {
   constructor() {
-    this.items = {};
-    const passwords = JSON.parse(window.localStorage.getItem('passwords'));
-    for (let i in passwords) {
-      this.items[i] = new Item(i, passwords[i]);
+    this.items = {}
+    const passwords = JSON.parse(window.localStorage.getItem('passwords')) || {}
+    const keys = Object.keys(passwords).sort()
+    for (let i = 0; i < keys.length; ++i) {
+      const key = keys[i]
+      this.items[key] = new Item(key, passwords[key])
     }
-    asafonov.messageBus.subscribe(asafonov.events.ITEM_UPDATED, this, 'onItemUpdated');
-    asafonov.messageBus.subscribe(asafonov.events.EDIT_DELETED, this, 'onEditDeleted');
-    asafonov.messageBus.subscribe(asafonov.events.EDIT_SAVED, this, 'onEditSaved');
+    asafonov.messageBus.subscribe(asafonov.events.ITEM_UPDATED, this, 'onItemUpdated')
+    asafonov.messageBus.subscribe(asafonov.events.EDIT_DELETED, this, 'onEditDeleted')
+    asafonov.messageBus.subscribe(asafonov.events.EDIT_SAVED, this, 'onEditSaved')
   }
   onItemUpdated (data) {
-    this.save();
+    this.save()
   }
   onEditDeleted (data) {
-    const name = data.item.name;
+    const name = data.item.name
     if (this.items[name]) {
-      this.deleteItem(name);
-      this.save();
-      asafonov.messageBus.send(asafonov.events.LIST_UPDATED);
+      this.deleteItem(name)
+      this.save()
+      asafonov.messageBus.send(asafonov.events.LIST_UPDATED)
     }
   }
   search (query) {
-    return Object.keys(this.items).filter(i => i.toLowerCase().indexOf(query.toLowerCase()) > -1);
+    return Object.keys(this.items).filter(i => i.toLowerCase().indexOf(query.toLowerCase()) > -1)
   }
   onEditSaved (data) {
     if (data.item && data.item.name == data.name) {
-      this.items[data.name].setOrUpdate(data.password);
+      this.items[data.name].setOrUpdate(data.password)
     } else {
-      data.item && this.deleteItem(data.item.name);
-      this.items[data.name] = new Item(data.name, data.password);
-      this.save();
-      asafonov.messageBus.send(asafonov.events.LIST_UPDATED);
+      data.item && this.deleteItem(data.item.name)
+      this.items[data.name] = new Item(data.name, data.password)
+      this.save()
+      asafonov.messageBus.send(asafonov.events.LIST_UPDATED)
     }
   }
   deleteItem (name) {
-    this.items[name].destroy();
-    this.items[name] = null;
-    delete this.items[name];
+    this.items[name].destroy()
+    this.items[name] = null
+    delete this.items[name]
   }
   updateItem (name, password) {
     if (this.items[name]) {
-      this.items[name].set(password);
+      this.items[name].set(password)
     } else {
-      this.items[name] = new Item(name, password);
-      asafonov.messageBus.send(asafonov.events.LIST_UPDATED);
+      this.items[name] = new Item(name, password)
+      asafonov.messageBus.send(asafonov.events.LIST_UPDATED)
     }
-    this.save();
+    this.save()
   }
   load (data) {
     for (let i in data) {
-      this.updateItem(i, data[i]);
+      this.updateItem(i, data[i])
     }
   }
   asString() {
-    let passwords = {};
+    let passwords = {}
     for (let i in this.items) {
-      passwords[i] = this.items[i].get();
+      passwords[i] = this.items[i].get()
     }
-    return JSON.stringify(passwords);
+    return JSON.stringify(passwords)
   }
   save() {
-    window.localStorage.setItem('passwords', this.asString());
+    window.localStorage.setItem('passwords', this.asString())
   }
   destroy() {
-    asafonov.messageBus.unsubscribe(asafonov.events.ITEM_UPDATED, this, 'onItemUpdated');
-    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_DELETED, this, 'onEditDeleted');
-    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_SAVED, this, 'onEditSaved');
-    this.items = null;
+    asafonov.messageBus.unsubscribe(asafonov.events.ITEM_UPDATED, this, 'onItemUpdated')
+    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_DELETED, this, 'onEditDeleted')
+    asafonov.messageBus.unsubscribe(asafonov.events.EDIT_SAVED, this, 'onEditSaved')
+    this.items = null
   }
 }
 class MessageBus {
@@ -482,13 +484,32 @@ class ItemListView {
     }
   }
   copyPasword() {
-    navigator.clipboard.writeText(this.model.get()).then(() => {
-      console.log("success");
-    }).catch((e)=> {
-      console.log(e);
-    });
-    if (NativeAndroid !== null && NativeAndroid !== undefined) {
-      NativeAndroid.copyToClipboard(this.model.get());
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(this.model.get()).then(() => {
+        console.log("success");
+      }).catch((e)=> {
+        console.log(e);
+      });
+    } else { //Apple=Shit
+      const input = document.createElement('input')
+      input.contentEditable = true
+      input.readOnly = false
+      input.value = this.model.get()
+      this.element.appendChild(input)
+      const range = document.createRange()
+      range.selectNodeContents(input)
+      const selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(range)
+      input.setSelectionRange(0, 99)
+      document.execCommand('copy')
+      this.element.removeChild(input)
+    }
+    try {
+      if (NativeAndroid !== null && NativeAndroid !== undefined) {
+        NativeAndroid.copyToClipboard(this.model.get());
+      }
+    } catch (e) {
     }
   }
   onCopy() {
@@ -572,8 +593,8 @@ class ListView {
     this.element = null;
   }
 }
-window.asafonov = {};
-window.asafonov.messageBus = new MessageBus();
+window.asafonov = {}
+window.asafonov.messageBus = new MessageBus()
 window.asafonov.events = {
   ITEM_UPDATED: 'itemUpdated',
   ITEM_ADDED: 'itemAdded',
@@ -585,12 +606,15 @@ window.asafonov.events = {
   EDIT_DELETED: 'editDeleted',
   POPUP_SHOW: 'popupShow',
   POPUP_HIDE: 'popupHide'
-};
+}
 window.asafonov.settings = {
   passwordMinLength: 12,
   passwordMaxLength: 24,
   simpleByDefault: true
-};
+}
+window.onerror = (msg, url, line) => {
+  alert(`${msg} on line ${line}`)
+}
 document.addEventListener("DOMContentLoaded", function(event) {
   const list = new List();
   const listView = new ListView(list);
