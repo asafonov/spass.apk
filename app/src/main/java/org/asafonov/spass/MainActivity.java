@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebChromeClient;
 
 public class MainActivity extends Activity {
 
@@ -21,7 +20,7 @@ public class MainActivity extends Activity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         mWebView.addJavascriptInterface(new WebAppInterface(this), "NativeAndroid");
-        mWebView.setWebChromeClient(new WebChromeClient());
+        mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.loadUrl("file:///android_asset/index.html");
     }
