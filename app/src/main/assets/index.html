@@ -6,6 +6,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel=stylesheet type=text/css href="style.css">
+  <script src="qrcode.min.js"></script>
+  <script src="jsQR.js"></script>
   <script src="main.js"></script>
 </head>
 
@@ -25,11 +27,11 @@
         </div>
         <div class="file_up">
           <div class="ot1 ico"></div>
-          <span class="ot2">Create backup</span>
+          <span class="ot2">Export</span>
         </div>
         <div class="file_down">
           <div class="ot1 ico"></div>
-          <span class="ot2">Load backup</span>
+          <span class="ot2">Import</span>
           <input type="file">
         </div>
       </div>
@@ -86,32 +88,6 @@
       <div class="button delete">
         <div class="ob ot2"></div>
         <span class="ot1">Delete item</span>
-      </div>
-      <!-- /button -->
-    </div>
-    <!-- /edit item -->
-  </div>
-
-  <div class="row edit hidden prompt">
-    <!--edit item -->
-    <div class="item wrap">
-      <div class="ob ol_0"></div>
-      <div class="name ot1">Please enter spass desktop host</div>
-      <div class="field">
-        <div class="ob ol_2"></div>
-        <input type="text" name="hostname" class="ot2" value="192.168.0.1">
-        <span></span>
-      </div>
-      <!-- button -->
-      <div class="button save ok">
-        <div class="ob ot2"></div>
-        <span class="ot1">Ok</span>
-      </div>
-      <!-- /button -->
-      <!-- button -->
-      <div class="button delete cancel">
-        <div class="ob ot2"></div>
-        <span class="ot1">Cancel</span>
       </div>
       <!-- /button -->
     </div>

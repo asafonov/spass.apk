@@ -55,6 +55,10 @@ h1 {
   cursor: pointer;
 }
 
+.back_color {
+  background-color: var(--back_color);
+}
+
 .big_div {
   margin: auto;
 }

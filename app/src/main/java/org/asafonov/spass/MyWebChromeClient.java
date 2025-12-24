@@ -15,7 +15,7 @@ import android.webkit.PermissionRequest;
 class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onPermissionRequest(final PermissionRequest request) {
-        request.grant(request.getResources());
+        request.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
     }
 
     @Override
