@@ -1,0 +1,2 @@
+Spass 2.0 release
+Since now, no server needed to sync your password. Just export as a QR code and scan it on a new device

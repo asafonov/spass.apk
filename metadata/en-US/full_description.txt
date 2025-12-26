@@ -1,0 +1,3 @@
+Spass is small but effective password manager for android.
+It can generate your password, copy them to clipboard and sync between devices using QR code.
+All passwords stored on your device, no internet connection or any type of account needed.
