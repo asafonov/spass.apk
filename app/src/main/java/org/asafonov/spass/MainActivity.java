@@ -18,7 +18,7 @@ import android.app.Activity;
 public class MainActivity extends Activity {
 
     private static final int REQ_CAMERA = 1001;
-    private static final String START_URL = "https://asafonov.org/spass.js/";
+    private static final String START_URL = "file:///android_asset/index.html";
 
     private WebView webView;
 
@@ -26,26 +26,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         webView = findViewById(R.id.activity_main_webview);
-
-        // Ask Android runtime permission early (WebView will also request its own).
         ensureCameraPermission();
-
         WebSettings s = webView.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setMediaPlaybackRequiresUserGesture(false);
-
-        // Helpful for modern web apps
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         }
-
-        // Keep navigation inside WebView
         webView.setWebViewClient(new WebViewClient());
 
-        // Allow getUserMedia() camera permission in WebView
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
