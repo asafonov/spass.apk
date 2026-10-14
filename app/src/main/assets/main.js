@@ -87,19 +87,30 @@ class List {
     this.save()
   }
   load (data) {
-    for (let i in this.items) {
-      this.deleteItem(i)
-    }
     for (let i in data) {
       this.updateItem(i, data[i])
     }
   }
-  asString() {
+  asStrings (limit = 10) {
+    const results = []
     let passwords = {}
+    let counter = 0
     for (let i in this.items) {
+      if (counter > 0 && limit > 0 && counter % limit === 0) {
+        results.push(JSON.stringify(passwords))
+        passwords = {}
+      }
       passwords[i] = this.items[i].get()
+      counter++
     }
-    return JSON.stringify(passwords)
+    results.push(JSON.stringify(passwords))
+    return results
+  }
+  asString() {
+    return this.asStrings(0)[0]
+  }
+  count() {
+    return Object.keys(this.items).length
   }
   save() {
     window.localStorage.setItem('passwords', this.asString())
@@ -250,8 +261,7 @@ class BackupView {
   constructor (list) {
     this.element = document.querySelector('.backup')
     this.list = list
-    this.qrCodeElement = this.createQRCodeElement()
-    this.qrCode = this.createQRCode()
+    this.qrCodeLimit = 10
     this.scannerElement = this.createScannerElement()
     this.stream = null
     this.scanning = false
@@ -268,30 +278,84 @@ class BackupView {
     this.element.querySelector('.file_up')[action]('click', this.onExportProxy)
     this.element.querySelector('.file_down')[action]('click', this.onImportProxy)
   }
-  onPopup() {
-    this.element.classList.add('open')
-  }
-  createQRCode() {
-    const size = Math.min(document.documentElement.clientWidth, document.documentElement.clientHeight) * 0.96
-    return new QRCode(this.qrCodeElement.querySelector('div'), {width: size, height: size})
-  }
-  createQRCodeElement() {
-    const div = document.createElement('div')
+  initQRCodes() {
+    if (this.qrCodeElement) {
+      this.qrCodeElement.innerHTML = ''
+    } else {
+      this.qrCodeElement = document.createElement('div')
+      document.body.appendChild(this.qrCodeElement)
+    }
+    this.qrCodes = []
     const w = document.documentElement.clientWidth
     const h = document.documentElement.clientHeight
     const size = Math.min(w, h)
-    div.style.position = 'fixed'
-    div.style.top = '0px'
-    div.style.left = '0px'
-    div.style.width = `${w}px`
-    div.style.height = `${h}px`
-    div.style.display = 'none'
-    div.style.zIndex = '999'
-    div.className = 'back_color'
-    div.style.justifyContent = 'center'
-    div.style.alignItems = 'center'
-    div.style.flexDirection = 'column'
-    document.body.appendChild(div)
+    this.qrCodeElement.style.position = 'fixed'
+    this.qrCodeElement.style.top = '0px'
+    this.qrCodeElement.style.left = '0px'
+    this.qrCodeElement.style.width = `${w}px`
+    this.qrCodeElement.style.height = `${h}px`
+    this.qrCodeElement.style.display = 'none'
+    this.qrCodeElement.style.zIndex = '999'
+    this.qrCodeElement.className = 'back_color'
+    this.qrCodeElement.style.justifyContent = 'center'
+    this.qrCodeElement.style.alignItems = 'center'
+    this.qrCodeElement.style.flexDirection = 'column'
+    this.qrCodeElement.style.overflowY = 'auto'
+    const numberOfItems = this.list.count()
+    const numberOfQRCodesNeeded = parseInt(numberOfItems / this.qrCodeLimit,  10) + (numberOfItems > 0 && numberOfItems % this.qrCodeLimit > 0 ? 1 : 0)
+    const qrDivs = []
+    for (let i = 0; i < numberOfQRCodesNeeded; ++i) {
+      const qrDiv = this.createQRCodeElement(size)
+      i > 0 && (qrDiv.style.marginTop = '20px')
+      this.qrCodeElement.appendChild(qrDiv)
+      this.qrCodes.push(this.createQRCode(size * 0.96, qrDiv))
+      qrDivs.push(qrDiv)
+    }
+    if (numberOfQRCodesNeeded > 1) {
+      let currentQR = 0
+      const prevNext = document.createElement('div')
+      prevNext.style.marginTop = '20px'
+      const prev = document.createElement('span')
+      prev.innerHTML = 'prev'
+      prev.style.visibility = 'hidden'
+      const next = document.createElement('span')
+      next.innerHTML = 'next'
+      next.style.marginLeft = '20px'
+      prevNext.appendChild(prev)
+      prevNext.appendChild(next)
+      this.qrCodeElement.appendChild(prevNext)
+      const showIndex = index => {
+        for (let i = 0; i < qrDivs.length; ++i) {
+          qrDivs[i].style.display = i === index ? 'flex' : 'none'
+        }
+      }
+      const onNextPrev = step => {
+        currentQR = Math.max(0, Math.min(qrDivs.length - 1, currentQR + step))
+        prev.style.visibility = currentQR > 0 ? 'visible' : 'hidden'
+        next.style.visibility = currentQR < qrDivs.length - 1 ? 'visible' : 'hidden'
+        showIndex(currentQR)
+      }
+      const onNext = () => onNextPrev(1)
+      const onPrev = () => onNextPrev(-1)
+      prev.addEventListener('click', onPrev)
+      next.addEventListener('click', onNext)
+      showIndex(0)
+    }
+    const button = document.createElement('div')
+    button.innerHTML = 'Close'
+    button.style.marginTop = '20px'
+    button.addEventListener('click', () => {
+      this.qrCodeElement.style.display = 'none'
+    })
+    this.qrCodeElement.appendChild(button)
+  }
+  onPopup() {
+    this.element.classList.add('open')
+  }
+  createQRCode (size, qrDiv) {
+    return new QRCode(qrDiv, {width: size, height: size})
+  }
+  createQRCodeElement (size) {
     const qrDiv = document.createElement('div')
     qrDiv.style.width = `${size}px`
     qrDiv.style.height = `${size}px`
@@ -299,15 +363,7 @@ class BackupView {
     qrDiv.style.alignItems = 'center'
     qrDiv.style.display = 'flex'
     qrDiv.style.backgroundColor = '#ffffff'
-    div.appendChild(qrDiv)
-    const button = document.createElement('div')
-    button.innerHTML = 'Close'
-    button.style.marginTop = '20px'
-    button.addEventListener('click', () => {
-      div.style.display = 'none'
-    })
-    div.appendChild(button)
-    return div
+    return qrDiv
   }
   createScannerElement() {
     const div = document.createElement('div')
@@ -335,9 +391,13 @@ class BackupView {
     return div
   }
   onExport() {
+    this.initQRCodes()
     this.qrCodeElement.style.display = 'flex'
-    this.qrCode.makeCode(this.list.asString())
     this.hidePopup()
+    const qrCodes = this.list.asStrings(this.qrCodeLimit)
+    for (let i = 0; i < qrCodes.length; ++i) {
+      this.qrCodes[i].makeCode(qrCodes[i])
+    }
   }
   async startCamera() {
     try {
