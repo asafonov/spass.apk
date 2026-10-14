@@ -306,7 +306,6 @@ class BackupView {
     const qrDivs = []
     for (let i = 0; i < numberOfQRCodesNeeded; ++i) {
       const qrDiv = this.createQRCodeElement(size)
-      i > 0 && (qrDiv.style.marginTop = '20px')
       this.qrCodeElement.appendChild(qrDiv)
       this.qrCodes.push(this.createQRCode(size * 0.96, qrDiv))
       qrDivs.push(qrDiv)

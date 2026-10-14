@@ -1,0 +1,1 @@
+export more than one qr code if there is a lot of data
